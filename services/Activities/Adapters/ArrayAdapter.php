@@ -7,13 +7,22 @@ use Illuminate\Support\Arr;
 
 class ArrayAdapter implements AdapterInterface
 {
+    /** @var array */
     private $store;
 
+    /**
+     * Constructor
+     *
+     * @param array $store
+     */
     public function __construct(array $store = [])
     {
         $this->store = $store;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function store(array $data)
     {
         $store = [
@@ -33,24 +42,31 @@ class ArrayAdapter implements AdapterInterface
         return $store['id'];
     }
 
-    public function fetch($id)
+    /**
+     * {@inheritdoc}
+     */
+    public function fetch(array $filters): ?array
     {
-        return Arr::first($this->store, function ($activity) use ($id) {
-            return $activity['id'] === $id;
+        return Arr::first($this->store, function ($activity) use ($filters) {
+            return !empty(array_intersect($activity, $filters));
         });
     }
 
-    public function delete($id)
+    /**
+     * {@inheritdoc}
+     */
+    public function delete(array $filters): void
     {
-        $this->store = array_filter($this->store, function ($activity) use ($id) {
-            return $activity['id'] !== $id;
+        $this->store = array_filter($this->store, function ($activity) use ($filters) {
+            return empty(array_intersect($activity, $filters));
         });
     }
 
-    public function exists($id)
+    /**
+     * {@inheritdoc}
+     */
+    public function exists(array $filters): bool
     {
-        return !empty(array_filter($this->store, function ($activity) use ($id) {
-            return $activity['id'] === $id;
-        }));
+        return !empty($this->fetch($filters));
     }
 }

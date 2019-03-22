@@ -6,6 +6,9 @@ use Deviate\Activities\Models\Eloquent\Activity;
 
 class EloquentAdapter implements AdapterInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function store(array $data)
     {
         $model = Activity::create($data);
@@ -13,19 +16,28 @@ class EloquentAdapter implements AdapterInterface
         return $model->id;
     }
 
-    public function delete($id)
+    /**
+     * {@inheritdoc}
+     */
+    public function delete(array $filters): void
     {
-        Activity::find($id)->delete();
+        Activity::where($filters)->delete();
     }
 
-    public function exists($id)
+    /**
+     * {@inheritdoc}
+     */
+    public function exists(array $filters): bool
     {
-        return Activity::where('id', $id)->exists();
+        return Activity::where($filters)->count() > 0;
     }
 
-    public function fetch($id)
+    /**
+     * {@inheritdoc}
+     */
+    public function fetch(array $filters): ?array
     {
-        $model = Activity::find($id);
+        $model = Activity::where($filters)->first();
 
         if (!$model) {
             return null;

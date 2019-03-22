@@ -15,7 +15,7 @@ class DeleteActivityTest extends TestCase
     {
         /** @var AdapterInterface $adapter */
         $adapter = $this->mock(AdapterInterface::class, function (MockInterface $mock) {
-            $mock->shouldReceive('delete')->once()->with('1')->andReturn(true);
+            $mock->shouldReceive('delete')->once()->with(['id' => 1])->andReturn(true);
         });
 
         $repository = new DeleteActivityRepository($adapter);

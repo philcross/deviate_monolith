@@ -16,7 +16,7 @@ class FetchActivityTest extends TestCase
     {
         /** @var AdapterInterface $adapter */
         $adapter = $this->mock(AdapterInterface::class, function (MockInterface $mock) {
-            $mock->shouldReceive('fetch')->once()->with(1)->andReturn([
+            $mock->shouldReceive('fetch')->once()->with(['id' => 1])->andReturn([
                 'id'          => 1,
                 'name'        => 'Test Activity',
                 'description' => 'This is a test activity',
@@ -46,7 +46,7 @@ class FetchActivityTest extends TestCase
     {
         /** @var AdapterInterface $adapter */
         $adapter = $this->mock(AdapterInterface::class, function (MockInterface $mock) {
-            $mock->shouldReceive('fetch')->once()->with(1)->andReturn(null);
+            $mock->shouldReceive('fetch')->once()->with(['id' => 1])->andReturn(null);
         });
 
         $service = new FetchActivity(new FetchActivityRepository($adapter));

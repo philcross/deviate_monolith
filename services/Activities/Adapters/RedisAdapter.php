@@ -2,20 +2,28 @@
 
 namespace Deviate\Activities\Adapters;
 
-use Illuminate\Contracts\Redis\Connection;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Contracts\Redis\Connection;
 
 class RedisAdapter implements AdapterInterface
 {
+    /** @var Connection */
     private $connection;
 
+    /**
+     * Constructor
+     *
+     * @param Connection $connection
+     */
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function store(array $data)
     {
         $data = array_merge($data, [
@@ -29,24 +37,31 @@ class RedisAdapter implements AdapterInterface
         return $data['id'];
     }
 
-    public function delete($id)
+    /**
+     * {@inheritdoc}
+     */
+    public function delete(array $filters): void
     {
-        $activity = $this->fetch($id);
+        $activity = $this->fetch($filters);
 
         $this->connection->lrem('activities', 0, json_encode($activity));
     }
 
-    public function exists($id)
+    /**
+     * {@inheritdoc}
+     */
+    public function exists(array $filters): bool
     {
-        return !is_null($this->fetch($id));
+        return !is_null($this->fetch($filters));
     }
 
-    public function fetch($id)
+    /**
+     * {@inheritdoc}
+     */
+    public function fetch(array $filters): ?array
     {
-        $activity = Arr::first($this->connection->lrange('activities', 0, -1), function ($entry) use ($id) {
-            $entry = json_decode($entry, true);
-
-            return $entry['id'] === $id;
+        $activity = Arr::first($this->connection->lrange('activities', 0, -1), function ($entry) use ($filters) {
+            return !empty(array_intersect(json_decode($entry, true), $filters));
         });
 
         return $activity ? json_decode($activity, true) : null;

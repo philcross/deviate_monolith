@@ -6,15 +6,30 @@ use Deviate\Activities\Adapters\AdapterInterface;
 
 class DeleteActivityRepository
 {
+    /** @var AdapterInterface */
     private $adapter;
 
+    /**
+     * Constructor
+     *
+     * @param AdapterInterface $adapter
+     */
     public function __construct(AdapterInterface $adapter)
     {
         $this->adapter = $adapter;
     }
 
-    public function deleteActivity($id)
+    /**
+     * Delete an activity
+     *
+     * @param mixed $id
+     *
+     * @return void
+     */
+    public function deleteById($id)
     {
-        $this->adapter->delete($id);
+        $this->adapter->delete([
+            'id' => $id
+        ]);
     }
 }

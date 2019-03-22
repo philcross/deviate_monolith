@@ -12,8 +12,8 @@ abstract class AbstractAdapterTest extends TestCase
     {
         $adapter = $this->getAdapter();
 
-        $this->assertTrue($adapter->exists(1));
-        $this->assertFalse($adapter->exists(2));
+        $this->assertTrue($adapter->exists(['id' => 1]));
+        $this->assertFalse($adapter->exists(['id' => 2]));
     }
 
     /** @test */
@@ -21,7 +21,7 @@ abstract class AbstractAdapterTest extends TestCase
     {
         $adapter = $this->getAdapter();
 
-        $activity = $adapter->fetch(1);
+        $activity = $adapter->fetch(['id' => 1]);
 
         $this->assertEquals('Test Activity', $activity['name']);
         $this->assertEquals('This is a test activity', $activity['description']);
@@ -47,7 +47,7 @@ abstract class AbstractAdapterTest extends TestCase
             'cost' => 1000,
         ]);
 
-        $activity = $adapter->fetch($id);
+        $activity = $adapter->fetch(['id' => $id]);
 
         $this->assertEquals('Test Activity', $activity['name']);
         $this->assertEquals('This is a test activity', $activity['description']);
@@ -64,9 +64,9 @@ abstract class AbstractAdapterTest extends TestCase
     {
         $adapter = $this->getAdapter();
 
-        $adapter->delete(1);
+        $adapter->delete(['id' => 1]);
 
-        $this->assertFalse($adapter->exists(1));
+        $this->assertFalse($adapter->exists(['id' => 1]));
     }
 
     abstract protected function getAdapter() : AdapterInterface;
